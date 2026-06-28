@@ -1,0 +1,71 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    /* Offset anchor scrolling for the sticky nav height */
+    scroll-padding-top: 5rem;
+  }
+
+  body {
+    @apply bg-ink font-sans text-paper antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Display headlines use the condensed heavy face by default */
+  h1,
+  h2,
+  h3 {
+    @apply font-display;
+  }
+
+  /* Accessible, visible focus ring on every interactive element (Brief §8.3) */
+  :focus-visible {
+    outline: 2px solid theme("colors.volt");
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  /* Respect reduced-motion preference site-wide (Brief §7.2) */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  /* Centered max-width content container (Brief §7) */
+  .container-fit {
+    @apply mx-auto w-full max-w-content px-6 md:px-8;
+  }
+
+  /* Section vertical rhythm: 64px mobile / 120px desktop (Brief §4.1) */
+  .section-pad {
+    @apply py-section md:py-section-d;
+  }
+
+  /* Primary CTA — Volt fill, Ink text. The ONLY primary button style. */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-btn bg-volt px-8 py-4
+      font-sans font-bold uppercase tracking-wide text-ink transition
+      hover:scale-[1.02] hover:shadow-lg focus-visible:outline-offset-4
+      disabled:pointer-events-none disabled:opacity-60;
+  }
+
+  /* Secondary — transparent, 2px Volt border */
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-btn border-2 border-volt
+      bg-transparent px-8 py-4 font-sans font-bold uppercase tracking-wide
+      transition hover:bg-volt/10;
+  }
+}
