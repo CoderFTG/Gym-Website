@@ -36,7 +36,7 @@ export function Trainers() {
                   <p className="mt-1 font-mono text-caption uppercase tracking-wide text-volt">
                     {trainer.specialty}
                   </p>
-                  <p className="mt-3 max-h-24 overflow-hidden text-body-base text-steel opacity-100 transition-all duration-300 lg:max-h-0 lg:opacity-0 lg:group-hover:max-h-32 lg:group-hover:opacity-100">
+                  <p className="mt-3 max-h-24 overflow-hidden text-body-base text-steel opacity-100 transition-[max-height,opacity] duration-300 lg:max-h-0 lg:opacity-0 lg:group-hover:max-h-32 lg:group-hover:opacity-100">
                     {trainer.bio}
                   </p>
                 </div>

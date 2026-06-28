@@ -12,6 +12,15 @@
   body {
     @apply bg-ink font-sans text-paper antialiased;
     text-rendering: optimizeLegibility;
+    color-scheme: dark;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Prevent double-tap zoom delay on interactive elements */
+  a,
+  button,
+  [role="button"] {
+    touch-action: manipulation;
   }
 
   /* Display headlines use the condensed athletic face by default */

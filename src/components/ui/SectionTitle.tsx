@@ -39,7 +39,7 @@ export function SectionTitle({
       )}
       <h2
         className={clsx(
-          "text-display-lg uppercase md:text-display-lg-d",
+          "text-balance text-display-lg uppercase md:text-display-lg-d",
           tone === "dark" ? "text-paper" : "text-ink",
         )}
       >

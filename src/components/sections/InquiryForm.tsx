@@ -110,6 +110,7 @@ export function InquiryForm() {
           id="name"
           type="text"
           autoComplete="name"
+          spellCheck={false}
           aria-invalid={!!errors.name}
           className={inputClass(!!errors.name)}
           {...register("name")}
@@ -120,7 +121,9 @@ export function InquiryForm() {
         <input
           id="phone"
           type="tel"
+          inputMode="tel"
           autoComplete="tel"
+          spellCheck={false}
           aria-invalid={!!errors.phone}
           className={inputClass(!!errors.phone)}
           {...register("phone")}
@@ -131,7 +134,9 @@ export function InquiryForm() {
         <input
           id="email"
           type="email"
+          inputMode="email"
           autoComplete="email"
+          spellCheck={false}
           aria-invalid={!!errors.email}
           className={inputClass(!!errors.email)}
           {...register("email")}
@@ -142,7 +147,7 @@ export function InquiryForm() {
         <textarea
           id="message"
           rows={3}
-          placeholder="Tell us your goals, or just say hi."
+          placeholder="e.g. I'd like to start with the free sessions…"
           aria-invalid={!!errors.message}
           className={clsx(inputClass(!!errors.message), "resize-none")}
           {...register("message")}
@@ -161,7 +166,7 @@ export function InquiryForm() {
 
       <button type="submit" className="btn-primary w-full" disabled={status === "submitting"}>
         {status === "submitting" ? (
-          "Sending..."
+          "Sending…"
         ) : (
           <>
             Request Free Sessions

@@ -43,7 +43,7 @@ export function Plans() {
                 </h3>
 
                 <div className="mt-4 flex items-baseline gap-1">
-                  <span className="font-mono text-numeral-lg font-bold text-paper md:text-numeral-lg-d">
+                  <span className="font-mono text-numeral-lg font-bold tabular-nums text-paper md:text-numeral-lg-d">
                     ${plan.price}
                   </span>
                   <span className="text-caption text-steel">/ {plan.period}</span>

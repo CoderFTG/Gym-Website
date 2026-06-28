@@ -29,6 +29,9 @@ const mono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL || "https://www.fitzonegym.com",
+  ),
   title: "FitZone Gym — Get to Work",
   description:
     "A modern fitness center built for results. See membership plans, meet the trainers, tour the facilities, and start your free trial today.",
@@ -53,7 +56,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#14151A",
+  themeColor: "#0B1120",
 };
 
 export default function RootLayout({
@@ -66,7 +69,16 @@ export default function RootLayout({
       lang="en"
       className={`${display.variable} ${body.variable} ${mono.variable}`}
     >
+      <head>
+        <link rel="preconnect" href="https://images.unsplash.com" />
+      </head>
       <body>
+        <a
+          href="#main"
+          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-btn focus:bg-volt focus:px-4 focus:py-2 focus:font-bold focus:text-ink"
+        >
+          Skip to content
+        </a>
         {children}
         <Analytics />
       </body>

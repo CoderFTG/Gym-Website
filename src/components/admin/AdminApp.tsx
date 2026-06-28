@@ -31,7 +31,7 @@ export function AdminApp() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-admin-bg font-sans text-slate-900">
+    <div className="min-h-screen bg-admin-bg font-sans text-slate-900 [color-scheme:light]">
       {!isSupabaseConfigured ? (
         <CenteredNote>
           Supabase isn&apos;t configured. Add your project keys to{" "}

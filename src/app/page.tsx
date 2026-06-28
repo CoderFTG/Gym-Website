@@ -20,7 +20,7 @@ export default function Home() {
   return (
     <>
       <Navbar />
-      <main>
+      <main id="main" className="scroll-mt-20">
         <Hero />
         <TornTape />
         <About />

@@ -42,7 +42,7 @@ export function Hero() {
         </Reveal>
 
         <Reveal delay={80}>
-          <h1 className="mt-6 text-display-xl uppercase text-paper md:text-display-xl-d">
+          <h1 className="mt-6 text-balance text-display-xl uppercase text-paper md:text-display-xl-d">
             Get
             <span className="text-volt">.</span> To
             <span className="text-volt">.</span> Work

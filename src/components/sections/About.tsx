@@ -40,7 +40,7 @@ export function About() {
         {about.stats.map((stat, i) => (
           <Reveal key={stat.label} delay={i * 90}>
             <div className="flex flex-col items-center text-center">
-              <span className="font-mono text-numeral-lg font-bold text-ink md:text-numeral-lg-d">
+              <span className="font-mono text-numeral-lg font-bold tabular-nums text-ink md:text-numeral-lg-d">
                 {stat.value}
               </span>
               <span aria-hidden className="my-2 h-1 w-8 bg-volt" />
