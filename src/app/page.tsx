@@ -1,24 +1,38 @@
+import { Navbar } from "@/components/layout/Navbar";
+import { Footer } from "@/components/layout/Footer";
+import { StickyCTABar } from "@/components/layout/StickyCTABar";
+import { Hero } from "@/components/sections/Hero";
+import { TornTape } from "@/components/ui/TornTape";
+import { About } from "@/components/sections/About";
+import { Trainers } from "@/components/sections/Trainers";
+import { Gallery } from "@/components/sections/Gallery";
+import { Plans } from "@/components/sections/Plans";
+import { Testimonials } from "@/components/sections/Testimonials";
+import { FAQ } from "@/components/sections/FAQ";
+import { Contact } from "@/components/sections/Contact";
+
 /**
- * Phase 1 placeholder — verifies the design-token foundation renders.
- * This is replaced in Phase 2 by the full single-page section build.
+ * FitZone single-page, long-scroll layout. The torn-tape signature appears
+ * exactly once, between Hero and About. Section order: Plans now follows the
+ * Gallery (Classes section removed).
  */
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-6 px-6 text-center">
-      <p className="font-mono text-caption uppercase tracking-widest text-volt">
-        FitZone Gym
-      </p>
-      <h1 className="text-display-xl md:text-display-xl-d">
-        Get to Work.
-      </h1>
-      <p className="max-w-md text-body-lg text-steel">
-        Foundation ready. Design tokens, fonts, and the static-export
-        pipeline are wired. The full site arrives in Phase 2.
-      </p>
-      <div className="mt-2 flex flex-wrap items-center justify-center gap-4">
-        <button className="btn-primary">Join Now</button>
-        <button className="btn-secondary text-volt">Take a Tour</button>
-      </div>
-    </main>
+    <>
+      <Navbar />
+      <main>
+        <Hero />
+        <TornTape />
+        <About />
+        <Trainers />
+        <Gallery />
+        <Plans />
+        <Testimonials />
+        <FAQ />
+        <Contact />
+      </main>
+      <Footer />
+      <StickyCTABar />
+    </>
   );
 }

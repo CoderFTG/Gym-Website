@@ -5,9 +5,12 @@ const nextConfig = {
   output: "export",
 
   // Static export cannot use the on-demand Image Optimization server,
-  // so images are served as-is. Pre-optimize/compress assets at build time.
+  // so images are served as-is. Remote demo photos come from Unsplash.
   images: {
     unoptimized: true,
+    remotePatterns: [
+      { protocol: "https", hostname: "images.unsplash.com" },
+    ],
   },
 
   // Emit `/about/index.html` style paths so links work on static hosts

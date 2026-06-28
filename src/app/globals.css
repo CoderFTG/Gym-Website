@@ -5,8 +5,8 @@
 @layer base {
   html {
     scroll-behavior: smooth;
-    /* Offset anchor scrolling for the sticky nav height */
     scroll-padding-top: 5rem;
+    -webkit-font-smoothing: antialiased;
   }
 
   body {
@@ -14,7 +14,7 @@
     text-rendering: optimizeLegibility;
   }
 
-  /* Display headlines use the condensed heavy face by default */
+  /* Display headlines use the condensed athletic face by default */
   h1,
   h2,
   h3 {
@@ -24,8 +24,13 @@
   /* Accessible, visible focus ring on every interactive element (Brief §8.3) */
   :focus-visible {
     outline: 2px solid theme("colors.volt");
-    outline-offset: 2px;
+    outline-offset: 3px;
     border-radius: 2px;
+  }
+
+  ::selection {
+    background: theme("colors.volt");
+    color: theme("colors.ink");
   }
 
   /* Respect reduced-motion preference site-wide (Brief §7.2) */
@@ -44,28 +49,80 @@
 }
 
 @layer components {
-  /* Centered max-width content container (Brief §7) */
+  /* Centered max-width content container */
   .container-fit {
     @apply mx-auto w-full max-w-content px-6 md:px-8;
   }
 
-  /* Section vertical rhythm: 64px mobile / 120px desktop (Brief §4.1) */
+  /* Generous section vertical rhythm — exaggerated minimalism wants air */
   .section-pad {
-    @apply py-section md:py-section-d;
+    @apply py-20 md:py-32;
   }
 
-  /* Primary CTA — Volt fill, Ink text. The ONLY primary button style. */
+  /* Primary CTA — Volt fill, Ink text, with a soft Volt glow on hover */
   .btn-primary {
     @apply inline-flex items-center justify-center gap-2 rounded-btn bg-volt px-8 py-4
-      font-sans font-bold uppercase tracking-wide text-ink transition
-      hover:scale-[1.02] hover:shadow-lg focus-visible:outline-offset-4
-      disabled:pointer-events-none disabled:opacity-60;
+      font-sans text-[0.95rem] font-bold uppercase tracking-[0.08em] text-ink
+      transition duration-200 hover:-translate-y-0.5 hover:shadow-volt
+      focus-visible:outline-offset-4 disabled:pointer-events-none disabled:opacity-60;
   }
 
   /* Secondary — transparent, 2px Volt border */
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 rounded-btn border-2 border-volt
-      bg-transparent px-8 py-4 font-sans font-bold uppercase tracking-wide
-      transition hover:bg-volt/10;
+    @apply inline-flex items-center justify-center gap-2 rounded-btn border-2 border-volt/70
+      bg-transparent px-8 py-4 font-sans text-[0.95rem] font-bold uppercase tracking-[0.08em]
+      transition duration-200 hover:border-volt hover:bg-volt/10;
+  }
+
+  /* Eyebrow label — mono, Volt, wide tracking */
+  .eyebrow {
+    @apply inline-flex items-center gap-2 font-mono text-eyebrow uppercase text-volt;
+  }
+  .eyebrow::before {
+    content: "";
+    @apply inline-block h-px w-8 bg-volt;
+  }
+}
+
+@layer utilities {
+  /* Subtle film-grain texture overlay for depth on dark sections */
+  .grain::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.4;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  }
+
+  /* Diagonal floor-tape stripe texture (gym marking motif) */
+  .tape-texture {
+    background-image: repeating-linear-gradient(
+      135deg,
+      rgba(249, 115, 22, 0.5) 0 2px,
+      transparent 2px 22px
+    );
+  }
+
+  /* Scroll-reveal: fade + rise when entering the viewport */
+  .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition:
+      opacity 0.7s ease,
+      transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+    will-change: opacity, transform;
+  }
+  .reveal.in-view {
+    opacity: 1;
+    transform: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
   }
 }

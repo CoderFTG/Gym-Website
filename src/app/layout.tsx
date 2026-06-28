@@ -1,10 +1,11 @@
 import type { Metadata, Viewport } from "next";
-import { Anton, Inter, JetBrains_Mono } from "next/font/google";
+import { Barlow_Condensed, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
-// Display — condensed, heavy, scoreboard presence (Brief §3)
-const display = Anton({
-  weight: "400",
+// Display — athletic condensed, built for oversized statement headlines
+// (Exaggerated Minimalism direction; overrides the Brief's Anton choice).
+const display = Barlow_Condensed({
+  weight: ["600", "700"],
   subsets: ["latin"],
   variable: "--font-display",
   display: "swap",
