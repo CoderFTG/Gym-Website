@@ -1,35 +1,67 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Send } from "lucide-react";
+import clsx from "clsx";
+import { inquirySchema, type InquiryInput } from "@/lib/validation";
+import { supabase, isSupabaseConfigured } from "@/lib/supabase";
+import { telHref } from "@/lib/links";
 
 /**
  * Inquiry form — the site's single conversion point (Brief §5.3).
- * Fields: Name, Phone, Email (required) + Message (optional) → 3 required + 1
- * optional, balancing the brief's 4 fields with the skill's "fewer is better".
- *
- * PHASE 2: visual + interaction shell with inline success/error states and a
- * honeypot. Submission is currently local-only (no network call).
- * PHASE 3 replaces `handleSubmit` with Zod validation + a Supabase insert.
+ * Name/Phone/Email required + optional Message. Validates with Zod, then writes
+ * directly to the Supabase `inquiries` table (RLS-protected insert). Honeypot +
+ * inline validation; plain-language success/error states (no popup modal).
  */
 type Status = "idle" | "submitting" | "success" | "error";
 
 export function InquiryForm() {
   const [status, setStatus] = useState<Status>("idle");
+  const honeypot = useRef<HTMLInputElement>(null);
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const form = e.currentTarget;
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<InquiryInput>({
+    resolver: zodResolver(inquirySchema),
+    mode: "onTouched",
+  });
 
-    // Honeypot: real users never fill this hidden field; bots often do.
-    const honeypot = (form.elements.namedItem("company") as HTMLInputElement)?.value;
-    if (honeypot) return; // silently drop
+  async function onSubmit(data: InquiryInput) {
+    // Honeypot: bots fill the hidden field; humans never do. Silently "succeed".
+    if (honeypot.current?.value) {
+      setStatus("success");
+      reset();
+      return;
+    }
 
     setStatus("submitting");
-    // TODO (Phase 3): validate with Zod and POST to Supabase `inquiries`.
-    // Local-only preview of the success state for now.
+
+    // Degrade gracefully if Supabase isn't configured yet.
+    if (!isSupabaseConfigured || !supabase) {
+      setStatus("error");
+      return;
+    }
+
+    const { error } = await supabase.from("inquiries").insert({
+      name: data.name,
+      phone: data.phone,
+      email: data.email,
+      message: data.message?.trim() ? data.message.trim() : null,
+      source_page: typeof window !== "undefined" ? window.location.pathname : "/",
+    });
+
+    if (error) {
+      setStatus("error");
+      return;
+    }
+
     setStatus("success");
-    form.reset();
+    reset();
   }
 
   if (status === "success") {
@@ -38,7 +70,7 @@ export function InquiryForm() {
         role="status"
         className="flex min-h-[320px] flex-col items-center justify-center rounded-card border border-volt/40 bg-volt/5 p-8 text-center"
       >
-        <p className="font-display text-heading-md uppercase text-volt">
+        <p className="font-display text-heading-md uppercase tracking-wide text-volt">
           Got it.
         </p>
         <p className="mt-2 max-w-sm text-body-base text-paper">
@@ -57,33 +89,71 @@ export function InquiryForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
+    <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-5">
       {/* Honeypot field — visually hidden, ignored by humans */}
       <div aria-hidden className="absolute left-[-9999px]" tabIndex={-1}>
         <label htmlFor="company">Company</label>
-        <input id="company" name="company" type="text" autoComplete="off" tabIndex={-1} />
-      </div>
-
-      <Field label="Name" name="name" type="text" autoComplete="name" required />
-      <Field label="Phone" name="phone" type="tel" autoComplete="tel" required />
-      <Field label="Email" name="email" type="email" autoComplete="email" required />
-
-      <div className="flex flex-col gap-2">
-        <label htmlFor="message" className="font-mono text-caption uppercase tracking-wide text-steel">
-          Message <span className="text-steel/60">(optional)</span>
-        </label>
-        <textarea
-          id="message"
-          name="message"
-          rows={3}
-          placeholder="Tell us your goals, or just say hi."
-          className="resize-none border-b-2 border-line bg-transparent py-2 text-body-base text-paper placeholder:text-steel/50 focus:border-volt focus:outline-none"
+        <input
+          id="company"
+          name="company"
+          ref={honeypot}
+          type="text"
+          autoComplete="off"
+          tabIndex={-1}
         />
       </div>
 
+      <Field label="Name" error={errors.name?.message}>
+        <input
+          id="name"
+          type="text"
+          autoComplete="name"
+          aria-invalid={!!errors.name}
+          className={inputClass(!!errors.name)}
+          {...register("name")}
+        />
+      </Field>
+
+      <Field label="Phone" error={errors.phone?.message}>
+        <input
+          id="phone"
+          type="tel"
+          autoComplete="tel"
+          aria-invalid={!!errors.phone}
+          className={inputClass(!!errors.phone)}
+          {...register("phone")}
+        />
+      </Field>
+
+      <Field label="Email" error={errors.email?.message}>
+        <input
+          id="email"
+          type="email"
+          autoComplete="email"
+          aria-invalid={!!errors.email}
+          className={inputClass(!!errors.email)}
+          {...register("email")}
+        />
+      </Field>
+
+      <Field label="Message" optional error={errors.message?.message}>
+        <textarea
+          id="message"
+          rows={3}
+          placeholder="Tell us your goals, or just say hi."
+          aria-invalid={!!errors.message}
+          className={clsx(inputClass(!!errors.message), "resize-none")}
+          {...register("message")}
+        />
+      </Field>
+
       {status === "error" && (
         <p role="alert" className="text-caption text-ember">
-          Something went wrong. Please try again, or call us directly.
+          Something went wrong sending your inquiry. Please try again, or{" "}
+          <a href={telHref} className="underline">
+            call us directly
+          </a>
+          .
         </p>
       )}
 
@@ -102,33 +172,43 @@ export function InquiryForm() {
 }
 
 /** Bottom-border input on dark sections (Brief §5.3). */
+function inputClass(hasError: boolean) {
+  return clsx(
+    "w-full border-b-2 bg-transparent py-2 text-body-base text-paper placeholder:text-steel/50 focus:outline-none",
+    hasError ? "border-ember focus:border-ember" : "border-line focus:border-volt",
+  );
+}
+
 function Field({
   label,
-  name,
-  type,
-  autoComplete,
-  required,
+  error,
+  optional,
+  children,
 }: {
   label: string;
-  name: string;
-  type: string;
-  autoComplete?: string;
-  required?: boolean;
+  error?: string;
+  optional?: boolean;
+  children: React.ReactNode;
 }) {
   return (
     <div className="flex flex-col gap-2">
-      <label htmlFor={name} className="font-mono text-caption uppercase tracking-wide text-steel">
+      <label
+        htmlFor={label.toLowerCase()}
+        className="font-mono text-caption uppercase tracking-wide text-steel"
+      >
         {label}
-        {required && <span className="text-volt"> *</span>}
+        {optional ? (
+          <span className="text-steel/60"> (optional)</span>
+        ) : (
+          <span className="text-volt"> *</span>
+        )}
       </label>
-      <input
-        id={name}
-        name={name}
-        type={type}
-        autoComplete={autoComplete}
-        required={required}
-        className="border-b-2 border-line bg-transparent py-2 text-body-base text-paper placeholder:text-steel/50 focus:border-volt focus:outline-none"
-      />
+      {children}
+      {error && (
+        <p className="text-caption text-ember" role="alert">
+          {error}
+        </p>
+      )}
     </div>
   );
 }
