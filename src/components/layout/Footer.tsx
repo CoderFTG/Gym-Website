@@ -52,7 +52,7 @@ export function Footer() {
             </li>
             <li className="flex items-center gap-3">
               <Phone size={18} strokeWidth={2} className="shrink-0 text-volt" aria-hidden />
-              <a href={telHref} className="transition hover:text-volt">
+              <a href={telHref} data-track="call_click" className="transition hover:text-volt">
                 {settings.phoneDisplay}
               </a>
             </li>

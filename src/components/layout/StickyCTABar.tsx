@@ -18,6 +18,7 @@ export function StickyCTABar() {
       <div className="flex items-stretch gap-3 px-4 py-3">
         <a
           href={telHref}
+          data-track="call_click"
           className="flex h-cta-bar flex-1 items-center justify-center gap-2 rounded-btn border-2 border-volt font-sans font-bold uppercase tracking-wide text-volt transition active:bg-volt/10"
         >
           <Phone size={18} strokeWidth={2} aria-hidden />

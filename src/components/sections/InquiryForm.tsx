@@ -7,6 +7,7 @@ import { Send } from "lucide-react";
 import clsx from "clsx";
 import { inquirySchema, type InquiryInput } from "@/lib/validation";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
+import { track } from "@/lib/analytics";
 import { telHref } from "@/lib/links";
 
 /**
@@ -60,6 +61,7 @@ export function InquiryForm() {
       return;
     }
 
+    track("generate_lead", { source_page: window.location.pathname });
     setStatus("success");
     reset();
   }

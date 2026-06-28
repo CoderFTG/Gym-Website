@@ -1,6 +1,5 @@
 import { MapPin, Clock, Phone, MessageCircle } from "lucide-react";
 import { SectionTitle } from "@/components/ui/SectionTitle";
-import { PhotoPlaceholder } from "@/components/ui/PhotoPlaceholder";
 import { InquiryForm } from "@/components/sections/InquiryForm";
 import { settings } from "@/content/site";
 import { telHref, whatsappHref } from "@/lib/links";
@@ -8,9 +7,17 @@ import { telHref, whatsappHref } from "@/lib/links";
 /**
  * Contact — Ink background; closes the page with intent (Brief §4.2).
  * Layout: inquiry form + location/map + hours + instant-contact buttons.
- * The Google Maps embed is wired in Phase 4 (placeholder shown for now).
+ * Map uses a keyless Google Maps embed built from the address, or an explicit
+ * NEXT_PUBLIC_GMAPS_EMBED_URL override.
  */
 export function Contact() {
+  const mapQuery = encodeURIComponent(
+    `${settings.address.line1}, ${settings.address.line2}`,
+  );
+  const mapSrc =
+    process.env.NEXT_PUBLIC_GMAPS_EMBED_URL ||
+    `https://maps.google.com/maps?q=${mapQuery}&output=embed`;
+
   return (
     <section id="contact" className="grain relative section-pad bg-ink">
       <div className="container-fit grid gap-12 lg:grid-cols-2">
@@ -30,12 +37,13 @@ export function Contact() {
         {/* Right: instant contact + hours + map */}
         <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-3 sm:flex-row">
-            <a href={telHref} className="btn-secondary flex-1 text-volt">
+            <a href={telHref} data-track="call_click" className="btn-secondary flex-1 text-volt">
               <Phone size={18} strokeWidth={2.5} aria-hidden />
               Call Now
             </a>
             <a
               href={whatsappHref}
+              data-track="whatsapp_click"
               target="_blank"
               rel="noopener noreferrer"
               className="btn-secondary flex-1 text-volt"
@@ -78,11 +86,15 @@ export function Contact() {
             </div>
           </div>
 
-          <PhotoPlaceholder
-            label="Google Map — gym location (wired in Phase 4)"
-            tone="dark"
-            className="aspect-[16/10] w-full rounded-card border border-line"
-          />
+          <div className="overflow-hidden rounded-card border border-line">
+            <iframe
+              title={`Map to ${settings.name} Gym`}
+              src={mapSrc}
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              className="aspect-[16/10] w-full"
+            />
+          </div>
         </div>
       </div>
     </section>
