@@ -43,3 +43,6 @@ FitZone_Gym_Implementation_Plan.docx
 /.kiro/
 /.agents/
 skills-lock.json
+
+# QA artifacts
+/screenshots/

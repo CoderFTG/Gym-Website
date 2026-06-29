@@ -17,10 +17,12 @@ type Consent = "granted" | "denied" | "unset";
 
 export function Analytics() {
   const [consent, setConsent] = useState<Consent>("unset");
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     const stored = localStorage.getItem(CONSENT_KEY);
     if (stored === "granted" || stored === "denied") setConsent(stored);
+    setMounted(true);
   }, []);
 
   // Delegate clicks on [data-track="event_name"] to GA (no-op until gtag loads).
@@ -59,11 +61,11 @@ gtag('config', '${GA_MEASUREMENT_ID}', { anonymize_ip: true });`}
         </>
       )}
 
-      {consent === "unset" && (
+      {mounted && consent === "unset" && (
         <div
           role="dialog"
           aria-label="Cookie consent"
-          className="fixed inset-x-4 bottom-24 z-50 mx-auto max-w-md rounded-card border border-line bg-surface/95 p-5 shadow-card backdrop-blur lg:bottom-6 lg:left-6 lg:right-auto lg:mx-0"
+          className="fixed inset-x-4 bottom-24 z-50 mx-auto max-w-md rounded-card border border-line bg-surface/95 p-5 shadow-card backdrop-blur lg:bottom-6 lg:left-auto lg:right-6 lg:mx-0"
         >
           <p className="text-body-base text-paper">
             We use cookies to measure traffic and improve the site. No tracking
